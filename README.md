@@ -190,6 +190,11 @@ La clase RegistroWindow registra un nuevo usuario y actualiza el archivo JSON.
 Después de registrar, el usuario puede cerrar la ventana de registro y volver a la ventana de login para iniciar sesión.
 
 
+INTERFAZ DE MEDICO (Vista de citas) 1.1
+se agrego parte del codigo una nueva interfaz en el codigo donde puede mostrar citas (aun no programar y que se guarden pero la ventana ya funciona si te registras como medico)
+Una nueva ventana (Toplevel) que simula una agenda de citas con un área de texto editable. linea de la 118-132
+Al iniciar sesión como “Médico”, se abra directamente la ventana con las citas( antes dando un mensaje sobre la ventana ahora ya se puede ejcutar y ver, no solo dando un mensaje por messagebox.showinfo). linea 64 y 65 
+
 
 
 
