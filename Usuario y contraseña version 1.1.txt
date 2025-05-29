@@ -1,0 +1,137 @@
+import tkinter as tk
+from tkinter import messagebox
+import json
+import os
+
+USUARIOS_FILE = "data/usuarios.json"
+
+os.makedirs("data", exist_ok=True)
+
+def cargar_usuarios():
+    if os.path.exists(USUARIOS_FILE):
+        with open(USUARIOS_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def guardar_usuarios(usuarios):
+    with open(USUARIOS_FILE, "w") as f:
+        json.dump(usuarios, f, indent=4)
+
+class LoginApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Login - Hospital")
+        self.root.geometry("400x400")
+        self.usuarios = cargar_usuarios()
+
+        self.frame = tk.Frame(self.root)
+        self.frame.pack(pady=40)
+
+        tk.Label(self.frame, text="Usuario:").grid(row=0, column=0, sticky="e")
+        self.usuario_entry = tk.Entry(self.frame)
+        self.usuario_entry.grid(row=0, column=1)
+
+        tk.Label(self.frame, text="Contraseña:").grid(row=1, column=0, sticky="e")
+        self.password_entry = tk.Entry(self.frame, show="*")
+        self.password_entry.grid(row=1, column=1)
+
+        self.login_btn = tk.Button(self.frame, text="Iniciar Sesión", command=self.iniciar_sesion)
+        self.login_btn.grid(row=2, column=0, columnspan=2, pady=10)
+
+        tk.Label(self.frame, text="¿No tienes cuenta? Regístrate abajo").grid(row=3, column=0, columnspan=2, pady=10)
+
+        self.registro_btn = tk.Button(self.frame, text="Registrarse", command=self.abrir_registro)
+        self.registro_btn.grid(row=4, column=0, columnspan=2)
+
+    def iniciar_sesion(self):
+        usuario = self.usuario_entry.get()
+        contraseña = self.password_entry.get()
+
+        if usuario in self.usuarios and self.usuarios[usuario]["password"] == contraseña:
+            rol = self.usuarios[usuario]["rol"]
+            messagebox.showinfo("Bienvenido", f"Iniciaste sesión como {rol}")
+            self.mostrar_interfaz_por_rol(rol)
+        else:
+            messagebox.showerror("Error", "Usuario o contraseña incorrectos")
+
+    def abrir_registro(self):
+        self.root.withdraw()
+        RegistroWindow(self.root, self.usuarios)
+
+    def mostrar_interfaz_por_rol(self, rol):
+        if rol.lower() == "enfermero":
+            messagebox.showinfo("Interfaz", "Aquí iría la interfaz de Enfermero")
+        elif rol.lower() == "médico":
+            VentanaMedico()
+        elif rol.lower() == "administrativo":
+            messagebox.showinfo("Interfaz", "Aquí iría la interfaz de Administrativo")
+        else:
+            messagebox.showwarning("Rol desconocido", f"No hay interfaz definida para el rol: {rol}")
+
+class RegistroWindow:
+    def __init__(self, main_root, usuarios):
+        self.usuarios = usuarios
+        self.root = tk.Toplevel(main_root)
+        self.root.title("Registro")
+        self.root.geometry("400x400")
+
+        self.frame = tk.Frame(self.root)
+        self.frame.pack(pady=40)
+
+        tk.Label(self.frame, text="Nuevo Usuario:").grid(row=0, column=0, sticky="e")
+        self.usuario_entry = tk.Entry(self.frame)
+        self.usuario_entry.grid(row=0, column=1)
+
+        tk.Label(self.frame, text="Contraseña:").grid(row=1, column=0, sticky="e")
+        self.password_entry = tk.Entry(self.frame, show="*")
+        self.password_entry.grid(row=1, column=1)
+
+        tk.Label(self.frame, text="Rol:").grid(row=2, column=0, sticky="e")
+        self.rol_var = tk.StringVar()
+        self.rol_var.set("Médico")
+        roles = ["Médico", "Enfermero", "Administrativo", "Otro"]
+        tk.OptionMenu(self.frame, self.rol_var, *roles).grid(row=2, column=1)
+
+        self.registrar_btn = tk.Button(self.frame, text="Registrar", command=self.registrar_usuario)
+        self.registrar_btn.grid(row=3, column=0, columnspan=2, pady=10)
+
+    def registrar_usuario(self):
+        usuario = self.usuario_entry.get()
+        contraseña = self.password_entry.get()
+        rol = self.rol_var.get()
+
+        if usuario in self.usuarios:
+            messagebox.showwarning("Error", "El usuario ya existe")
+            return
+
+        if usuario and contraseña:
+            self.usuarios[usuario] = {
+                "password": contraseña,
+                "rol": rol
+            }
+            guardar_usuarios(self.usuarios)
+            messagebox.showinfo("Registrado", f"Usuario {usuario} creado como {rol}")
+            self.root.destroy()
+        else:
+            messagebox.showerror("Error", "Todos los campos son obligatorios")
+
+class VentanaMedico:
+    def __init__(self):
+        self.root = tk.Toplevel()
+        self.root.title("Citas del Médico")
+        self.root.geometry("600x400")
+
+        tk.Label(self.root, text="Citas del Médico", font=("Arial", 16, "bold")).pack(pady=20)
+
+        self.citas_text = tk.Text(self.root, height=15, width=60)
+        self.citas_text.pack(pady=10)
+
+       
+        self.citas_text.insert("end", "• 09:00 - Paciente: Juan Pérez\n")
+        self.citas_text.insert("end", "• 10:00 - Paciente: Ana García\n")
+        self.citas_text.insert("end", "• 11:30 - Paciente: Luis Rodríguez\n")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = LoginApp(root)
+    root.mainloop()
