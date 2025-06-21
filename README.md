@@ -54,17 +54,17 @@ La funcion del codigo:
     
       Esto da un mensaje de bienvenida, la fecha actual y como interactuar con el programa
 
-    1.2 registro de paciente
+    1.3 registro de paciente
 
       En esta ventana el usuario tiene que registrar al paciente con el nombre y apellidos, edad, numero de seguro social y su enfermedad
       el area dependera de la enfermedad del paciente donde cada enfermero y doctor estaran en esa area
 
-    1.2 registro de personal
+    1.5 registro de personal
 
       En esta ventana son todos los doctores y enfermeros del hospital, puedes ir registrando o quitandolos, en esta misma nos marca su
       especialidad o que si estan ocupado o no.
 
-    1.2 camillas
+    1.8 camillas
 
       en esta ventana se registran las camillas de los pacientes y nos muestra quien la ocupa y que doctor y enfermo lo estan atendiendo
 
